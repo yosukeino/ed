@@ -1,0 +1,112 @@
+body {
+  font-family: sans-serif;
+  margin: 20px;
+  line-height: 1.6;
+}
+
+.no-print {
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.setting-group {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.setting-group:last-child {
+  border-bottom: none;
+}
+
+.checkbox-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+}
+
+.checkbox-list label {
+  display: block;
+  cursor: pointer;
+}
+
+.note {
+  font-size: 14px;
+  color: #666;
+}
+
+input[type="number"] {
+  padding: 5px;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.small-btn {
+  padding: 5px 10px;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-right: 5px;
+}
+
+.print-area {
+  display: none;
+}
+
+.worksheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #000;
+  padding-bottom: 10px;
+}
+
+.worksheet-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.student-info {
+  font-size: 16px;
+}
+
+.question-list {
+  list-style-type: decimal;
+  padding-left: 20px;
+  margin-bottom: 40px;
+}
+
+.question-list li {
+  margin-bottom: 25px;
+  font-size: 18px;
+}
+
+.blank-line {
+  display: block;
+  border-bottom: 1px solid #000;
+  height: 30px;
+  margin-top: 10px;
+  width: 90%;
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
+  .print-area {
+    display: block;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+}
