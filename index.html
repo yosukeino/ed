@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worksheet Generator</title>
+<style>
+  body { font-family: sans-serif; margin: 20px; line-height: 1.6; }
+  .no-print { background-color: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+  .setting-group { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #ccc; }
+  .setting-group:last-child { border-bottom: none; }
+  .checkbox-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+  .checkbox-list label { display: block; cursor: pointer; }
+  input[type="number"] { padding: 5px; font-size: 16px; margin-right: 10px; }
+  button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin-right: 10px; margin-top: 10px; }
+  .small-btn { padding: 5px 10px; font-size: 14px; margin-top: 10px; margin-right: 5px; }
+  .print-area { display: none; }
+  .worksheet-header { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #000; padding-bottom: 10px; }
+  .question-list { list-style-type: decimal; padding-left: 20px; margin-bottom: 40px; }
+  .question-list li { margin-bottom: 25px; font-size: 18px; }
+  .blank-line { display: block; border-bottom: 1px solid #000; height: 30px; margin-top: 10px; width: 90%; }
+  
+  @media print {
+    .no-print { display: none; }
+    .print-area { display: block; }
+    .page-break { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <h2>Worksheet Settings</h2>
+
+  <div class="setting-group">
+    <p>Question Type (出題形式):</p>
+    <label><input type="radio" name="qType" value="en2jp" checked> English to Japanese (和訳)</label><br>
+    <label><input type="radio" name="qType" value="jp2en"> Japanese to English (英訳)</label>
+  </div>
+
+  <div class="setting-group">
+    <p>Target Sections (対象セクションを選択):</p>
+    <div id="section-checkboxes" class="checkbox-list">
+      Loading data...
+    </div>
+    <button class="small-btn" onclick="checkAll(true)">Select All</button>
+    <button class="small-btn" onclick="checkAll(false)">Deselect All</button>
+  </div>
+
+  <div class="setting-group">
+    <p>Number of Questions (出題数):</p>
+    <input type="number" id="target-num" value="10" min="1" style="width: 60px;"> 問
+    <span style="font-size: 14px; color: #666;">※対象セクションの例文が指定数より少ない場合は、最大数で出力されます。</span>
+  </div>
+
+  <button onclick="generateWorksheet()">Generate Worksheet</button>
+  <button onclick="window.print()">Print</button>
+</div>
+
+<div id="print-area" class="print-area">
+  <div class="worksheet-header">
+    <h2>English Practice</h2>
+    <div>Name: ______________________ / Date: ________</div>
+  </div>
+  <ol id="student-questions" class="question-list"></ol>
+
+  <div class="page-break"></div>
+
+  <div class="worksheet-header">
+    <h2>Answer Key</h2>
+  </div>
+  <ol id="teacher-answers" class="question-list"></ol>
+</div>
+
+<script>
+let data = {};
+
+window.onload = async function() {
+  try {
+    const response = await fetch('1-20.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    data = await response.json();
+    renderCheckboxes();
+  } catch (error) {
+    document.getElementById('section-checkboxes').innerHTML = 
+      `<span style="color: red;">Failed to load 1-20.json. Please make sure you are running a local web server.<br>Error: ${error.message}</span>`;
+  }
+};
+
+function renderCheckboxes() {
+  const container = document.getElementById('section-checkboxes');
+  container.innerHTML = ''; 
+  
+  for (const key of Object.keys(data)) {
+    const title = data[key].title;
+    const label = document.createElement('label');
+    
+    const isChecked = key === "1" ? "checked" : "";
+    label.innerHTML = `<input type="checkbox" name="targetSection" value="${key}" ${isChecked}> ${title}`;
+    container.appendChild(label);
+  }
+}
+
+function checkAll(checked) {
+  const checkboxes = document.querySelectorAll('input[name="targetSection"]');
+  checkboxes.forEach(cb => cb.checked = checked);
+}
+
+function generateWorksheet() {
+  const qType = document.querySelector('input[name="qType"]:checked').value;
+  const checkboxes = document.querySelectorAll('input[name="targetSection"]:checked');
+  const targetNum = parseInt(document.getElementById('target-num').value);
+  
+  if (checkboxes.length === 0) {
+    alert("Please select at least one section.");
+    return;
+  }
+
+  let pool = [];
+  checkboxes.forEach(cb => {
+    const key = cb.value;
+    if (data[key]) {
+      pool = pool.concat(data[key].sentences);
+    }
+  });
+
+  pool = pool.sort(() => 0.5 - Math.random());
+  const finalNum = Math.min(targetNum, pool.length);
+  pool = pool.slice(0, finalNum);
+
+  if (pool.length === 0) {
+    alert("No questions found.");
+    return;
+  }
+
+  const qList = document.getElementById('student-questions');
+  const aList = document.getElementById('teacher-answers');
+  qList.innerHTML = '';
+  aList.innerHTML = '';
+
+  pool.forEach(q => {
+    const qLi = document.createElement('li');
+    const aLi = document.createElement('li');
+    
+    if (qType === 'en2jp') {
+      qLi.innerHTML = `${q.en}<span class="blank-line"></span>`;
+      aLi.innerHTML = `<u>${q.en}</u><br>${q.jp}`;
+    } else {
+      qLi.innerHTML = `${q.jp}<span class="blank-line"></span>`;
+      aLi.innerHTML = `<u>${q.jp}</u><br>${q.en}`;
+    }
+    
+    qList.appendChild(qLi);
+    aList.appendChild(aLi);
+  });
+
+  document.getElementById('print-area').style.display = 'block';
+}
+</script>
+</body>
+</html>
