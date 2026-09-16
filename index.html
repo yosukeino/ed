@@ -15,7 +15,9 @@
   button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin-right: 10px; margin-top: 10px; }
   .small-btn { padding: 5px 10px; font-size: 14px; margin-top: 10px; margin-right: 5px; }
   .print-area { display: none; }
-  .worksheet-header { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #000; padding-bottom: 10px; }
+  .worksheet-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid #000; padding-bottom: 10px; }
+  .worksheet-header h2 { margin: 0; font-size: 22px; }
+  .student-info { font-size: 16px; }
   .question-list { list-style-type: decimal; padding-left: 20px; margin-bottom: 40px; }
   .question-list li { margin-bottom: 25px; font-size: 18px; }
   .blank-line { display: block; border-bottom: 1px solid #000; height: 30px; margin-top: 10px; width: 90%; }
@@ -58,16 +60,19 @@
 </div>
 
 <div id="print-area" class="print-area">
+  <!-- 問題プリント -->
   <div class="worksheet-header">
-    <h2>English Practice</h2>
-    <div>Name: ______________________ / Date: ________</div>
+    <h2 id="student-header-title"></h2>
+    <div class="student-info">Name: ____________________________________</div>
   </div>
   <ol id="student-questions" class="question-list"></ol>
 
   <div class="page-break"></div>
 
+  <!-- 解答プリント -->
   <div class="worksheet-header">
-    <h2>Answer Key</h2>
+    <h2 id="teacher-header-title"></h2>
+    <div>[ Answer Key ]</div>
   </div>
   <ol id="teacher-answers" class="question-list"></ol>
 </div>
@@ -85,7 +90,7 @@ window.onload = async function() {
     renderCheckboxes();
   } catch (error) {
     document.getElementById('section-checkboxes').innerHTML = 
-      `<span style="color: red;">Failed to load 1-20.json. Please make sure you are running a local web server.<br>Error: ${error.message}</span>`;
+      `<span style="color: red;">Failed to load 1-20.json.<br>Error: ${error.message}</span>`;
   }
 };
 
@@ -96,7 +101,6 @@ function renderCheckboxes() {
   for (const key of Object.keys(data)) {
     const title = data[key].title;
     const label = document.createElement('label');
-    
     const isChecked = key === "1" ? "checked" : "";
     label.innerHTML = `<input type="checkbox" name="targetSection" value="${key}" ${isChecked}> ${title}`;
     container.appendChild(label);
@@ -106,6 +110,15 @@ function renderCheckboxes() {
 function checkAll(checked) {
   const checkboxes = document.querySelectorAll('input[name="targetSection"]');
   checkboxes.forEach(cb => cb.checked = checked);
+}
+
+function generateRandomCode(length = 2) {
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
 }
 
 function generateWorksheet() {
@@ -118,9 +131,12 @@ function generateWorksheet() {
     return;
   }
 
+  const selectedKeys = Array.from(checkboxes)
+    .map(cb => parseInt(cb.value))
+    .sort((a, b) => a - b);
+
   let pool = [];
-  checkboxes.forEach(cb => {
-    const key = cb.value;
+  selectedKeys.forEach(key => {
     if (data[key]) {
       pool = pool.concat(data[key].sentences);
     }
@@ -134,6 +150,19 @@ function generateWorksheet() {
     alert("No questions found.");
     return;
   }
+
+  // テストタイトル生成（ex: 1_3_1A または 5_9B）
+  const testCode = generateRandomCode(2);
+  let rangeLabel = '';
+  if (selectedKeys.length === 1) {
+    rangeLabel = `${selectedKeys[0]}`;
+  } else {
+    rangeLabel = `${selectedKeys[0]}_${selectedKeys[selectedKeys.length - 1]}`;
+  }
+  const fullTestTitle = `${rangeLabel}_${testCode}`;
+
+  document.getElementById('student-header-title').textContent = fullTestTitle;
+  document.getElementById('teacher-header-title').textContent = `${fullTestTitle} [解答]`;
 
   const qList = document.getElementById('student-questions');
   const aList = document.getElementById('teacher-answers');
