@@ -126,6 +126,12 @@ button {
   font-weight: bold;
 }
 
+.web-instruction {
+  font-size: 13px;
+  color: #0066cc;
+  margin-bottom: 15px;
+}
+
 .question-list {
   list-style-type: decimal;
   padding-left: 20px;
@@ -137,20 +143,60 @@ button {
   font-size: 18px;
 }
 
-.blank-line {
-  display: block;
+.interactive-blank {
+  display: flex;
+  align-items: center;
   border-bottom: 1px solid #000;
-  height: 30px;
-  margin-top: 10px;
+  min-height: 36px;
+  margin-top: 8px;
   width: 90%;
+  cursor: pointer;
+  padding: 2px 10px;
+  box-sizing: border-box;
+  background-color: #fafafa;
+  transition: background-color 0.2s;
+}
+
+.interactive-blank:hover {
+  background-color: #f0f7ff;
+}
+
+.interactive-blank .placeholder-hint {
+  font-size: 13px;
+  color: #999;
+  user-select: none;
+}
+
+.interactive-blank .revealed-answer {
+  display: none;
+  font-size: 17px;
+  color: #0055aa;
+  font-weight: bold;
+}
+
+.interactive-blank.show .placeholder-hint {
+  display: none;
+}
+
+.interactive-blank.show .revealed-answer {
+  display: inline;
 }
 
 @media print {
-  .no-print {
-    display: none;
+  .no-print,
+  .no-print-hint {
+    display: none !important;
   }
   .print-area {
     display: block;
+  }
+  .interactive-blank {
+    background-color: transparent !important;
+    border-bottom: 1px solid #000 !important;
+  }
+  .interactive-blank .placeholder-hint,
+  .interactive-blank .revealed-answer {
+    display: none !important;
   }
   .page-break {
     page-break-before: always;

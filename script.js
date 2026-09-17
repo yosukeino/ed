@@ -81,6 +81,10 @@ function generateRandomCode(length = 2) {
   return result;
 }
 
+function toggleAnswer(element) {
+  element.classList.toggle('show');
+}
+
 function generateWorksheet() {
   const qType = document.querySelector('input[name="qType"]:checked').value;
   const checkboxes = document.querySelectorAll('.sec-cb:checked');
@@ -111,7 +115,6 @@ function generateWorksheet() {
     return;
   }
 
-  // 出題範囲タイトルの生成（例: 出題範囲 S10-S25 または 出題範囲 S1）
   let rangeTitle = '';
   if (selectedKeys.length === 1) {
     rangeTitle = `出題範囲 S${selectedKeys[0]}`;
@@ -119,7 +122,6 @@ function generateWorksheet() {
     rangeTitle = `出題範囲 S${selectedKeys[0]}-S${selectedKeys[selectedKeys.length - 1]}`;
   }
 
-  // 通し番号・シリアルコードの生成（例: Code: S1-S20_8K）
   const testCode = generateRandomCode(2);
   let serialCode = '';
   if (selectedKeys.length === 1) {
@@ -143,13 +145,20 @@ function generateWorksheet() {
     const qLi = document.createElement('li');
     const aLi = document.createElement('li');
     
-    if (qType === 'en2jp') {
-      qLi.innerHTML = `${q.en}<span class="blank-line"></span>`;
-      aLi.innerHTML = `<u>${q.en}</u><br>${q.jp}`;
-    } else {
-      qLi.innerHTML = `${q.jp}<span class="blank-line"></span>`;
-      aLi.innerHTML = `<u>${q.jp}</u><br>${q.en}`;
-    }
+    const questionText = (qType === 'en2jp') ? q.en : q.jp;
+    const answerText = (qType === 'en2jp') ? q.jp : q.en;
+
+    // 生徒用：クリックで答えが開閉する解答欄
+    qLi.innerHTML = `
+      ${questionText}
+      <div class="interactive-blank" onclick="toggleAnswer(this)">
+        <span class="placeholder-hint">クリック／タップで解答を表示</span>
+        <span class="revealed-answer">${answerText}</span>
+      </div>
+    `;
+
+    // 先生・解答用
+    aLi.innerHTML = `<u>${questionText}</u><br>${answerText}`;
     
     qList.appendChild(qLi);
     aList.appendChild(aLi);
