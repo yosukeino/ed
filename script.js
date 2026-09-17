@@ -81,10 +81,6 @@ function generateRandomCode(length = 2) {
   return result;
 }
 
-function toggleAnswer(element) {
-  element.classList.toggle('show');
-}
-
 function generateWorksheet() {
   const qType = document.querySelector('input[name="qType"]:checked').value;
   const checkboxes = document.querySelectorAll('.sec-cb:checked');
@@ -148,16 +144,19 @@ function generateWorksheet() {
     const questionText = (qType === 'en2jp') ? q.en : q.jp;
     const answerText = (qType === 'en2jp') ? q.jp : q.en;
 
-    // 生徒用：クリックで答えが開閉する解答欄
     qLi.innerHTML = `
       ${questionText}
-      <div class="interactive-blank" onclick="toggleAnswer(this)">
+      <div class="interactive-blank">
         <span class="placeholder-hint">クリック／タップで解答を表示</span>
         <span class="revealed-answer">${answerText}</span>
       </div>
     `;
 
-    // 先生・解答用
+    const blankDiv = qLi.querySelector('.interactive-blank');
+    blankDiv.addEventListener('click', function() {
+      this.classList.toggle('show');
+    });
+
     aLi.innerHTML = `<u>${questionText}</u><br>${answerText}`;
     
     qList.appendChild(qLi);
