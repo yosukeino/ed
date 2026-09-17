@@ -21,15 +21,44 @@ body {
   border-bottom: none;
 }
 
+.range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.range-inputs input[type="number"] {
+  width: 70px;
+  padding: 6px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.quick-buttons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 14px;
+}
+
 .checkbox-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .checkbox-list label {
   display: block;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .note {
@@ -40,7 +69,6 @@ body {
 input[type="number"] {
   padding: 5px;
   font-size: 16px;
-  margin-right: 10px;
 }
 
 button {
@@ -52,10 +80,10 @@ button {
 }
 
 .small-btn {
-  padding: 5px 10px;
-  font-size: 14px;
-  margin-top: 10px;
-  margin-right: 5px;
+  padding: 4px 10px;
+  font-size: 13px;
+  margin: 0;
+  cursor: pointer;
 }
 
 .print-area {

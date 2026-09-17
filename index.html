@@ -18,10 +18,27 @@
   </div>
 
   <div class="setting-group">
-    <p>Target Sections (対象セクションを選択):</p>
-    <div id="section-checkboxes" class="checkbox-list"></div>
-    <button class="small-btn" onclick="checkAll(true)">Select All</button>
-    <button class="small-btn" onclick="checkAll(false)">Deselect All</button>
+    <p>Target Range (セクション範囲の指定):</p>
+    <div class="range-inputs">
+      <span>Section</span>
+      <input type="number" id="range-start" value="1" min="1">
+      <span>〜</span>
+      <input type="number" id="range-end" value="20" min="1">
+      <button class="small-btn" onclick="applyRange()">Apply Range</button>
+    </div>
+    
+    <div class="quick-buttons">
+      <span>Quick Select:</span>
+      <button class="small-btn" onclick="setQuickRange(1, 20)">1 - 20</button>
+      <button class="small-btn" onclick="setQuickRange(21, 40)">21 - 40</button>
+      <button class="small-btn" onclick="setQuickRange(41, 60)">41 - 60</button>
+      <button class="small-btn" onclick="setQuickRange(1, 108)">All (1 - 108)</button>
+    </div>
+
+    <details style="margin-top: 15px;">
+      <summary style="cursor: pointer; font-size: 14px; color: #555;">個別セクションの確認・微調整 (クリックで開閉)</summary>
+      <div id="section-checkboxes" class="checkbox-list" style="margin-top: 10px;"></div>
+    </details>
   </div>
 
   <div class="setting-group">
