@@ -72,13 +72,19 @@ function syncInputsFromCheckboxes() {
   }
 }
 
-function generateRandomCode(length = 2) {
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+// 変更: 英数字ではなくランダムな絵文字2つを生成する
+function generateEmojiMark() {
+  const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🦋', '🍎', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍈', '🍒', '🍑', '🍍', '🍅', '🍆', '🥑', '🍔', '🍟', '🍕', '🌭', '🍿', '🍩', '⚽', '🏀', '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '🚗', '🚕', '🚙', '🚌', '🚓', '🚑', '🚒', '🚀', '🛸', '🚁', '🌟', '⭐', '🌠', '✨', '⚡', '🔥', '💧', '☀️', '🌈', '☁️', '❄️', '🍀', '🌻', '🌺', '🌸', '🌼', '🌷', '🌱', '🌲'];
+  
+  const e1 = emojis[Math.floor(Math.random() * emojis.length)];
+  let e2 = emojis[Math.floor(Math.random() * emojis.length)];
+  
+  // 同じ絵文字が並ばないようにする
+  while (e1 === e2) {
+    e2 = emojis[Math.floor(Math.random() * emojis.length)];
   }
-  return result;
+  
+  return e1 + e2;
 }
 
 function generateWorksheet() {
@@ -118,19 +124,15 @@ function generateWorksheet() {
     rangeTitle = `出題範囲 S${selectedKeys[0]}-S${selectedKeys[selectedKeys.length - 1]}`;
   }
 
-  const testCode = generateRandomCode(2);
-  let serialCode = '';
-  if (selectedKeys.length === 1) {
-    serialCode = `Code: S${selectedKeys[0]}_${testCode}`;
-  } else {
-    serialCode = `Code: S${selectedKeys[0]}-S${selectedKeys[selectedKeys.length - 1]}_${testCode}`;
-  }
+  // 絵文字パターンのセット
+  const emojiMark = generateEmojiMark();
+  const markLabel = `パターン: ${emojiMark}`;
 
   document.getElementById('student-header-title').textContent = rangeTitle;
-  document.getElementById('student-serial-code').textContent = serialCode;
+  document.getElementById('student-serial-code').textContent = markLabel;
 
   document.getElementById('teacher-header-title').textContent = rangeTitle;
-  document.getElementById('teacher-serial-code').textContent = serialCode;
+  document.getElementById('teacher-serial-code').textContent = markLabel;
 
   const qList = document.getElementById('student-questions');
   const aList = document.getElementById('teacher-answers');
