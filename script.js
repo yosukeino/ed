@@ -111,17 +111,28 @@ function generateWorksheet() {
     return;
   }
 
-  const testCode = generateRandomCode(2);
-  let rangeLabel = '';
+  // 出題範囲タイトルの生成（例: 出題範囲 S10-S25 または 出題範囲 S1）
+  let rangeTitle = '';
   if (selectedKeys.length === 1) {
-    rangeLabel = `${selectedKeys[0]}`;
+    rangeTitle = `出題範囲 S${selectedKeys[0]}`;
   } else {
-    rangeLabel = `${selectedKeys[0]}_${selectedKeys[selectedKeys.length - 1]}`;
+    rangeTitle = `出題範囲 S${selectedKeys[0]}-S${selectedKeys[selectedKeys.length - 1]}`;
   }
-  const fullTestTitle = `${rangeLabel}_${testCode}`;
 
-  document.getElementById('student-header-title').textContent = fullTestTitle;
-  document.getElementById('teacher-header-title').textContent = `${fullTestTitle} [解答]`;
+  // 通し番号・シリアルコードの生成（例: Code: S1-S20_8K）
+  const testCode = generateRandomCode(2);
+  let serialCode = '';
+  if (selectedKeys.length === 1) {
+    serialCode = `Code: S${selectedKeys[0]}_${testCode}`;
+  } else {
+    serialCode = `Code: S${selectedKeys[0]}-S${selectedKeys[selectedKeys.length - 1]}_${testCode}`;
+  }
+
+  document.getElementById('student-header-title').textContent = rangeTitle;
+  document.getElementById('student-serial-code').textContent = serialCode;
+
+  document.getElementById('teacher-header-title').textContent = rangeTitle;
+  document.getElementById('teacher-serial-code').textContent = serialCode;
 
   const qList = document.getElementById('student-questions');
   const aList = document.getElementById('teacher-answers');

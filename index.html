@@ -52,17 +52,25 @@
 </div>
 
 <div id="print-area" class="print-area">
+  <!-- 生徒用プリント -->
   <div class="worksheet-header">
-    <h2 id="student-header-title"></h2>
+    <div class="header-left">
+      <h2 id="student-header-title"></h2>
+      <div id="student-serial-code" class="serial-code"></div>
+    </div>
     <div class="student-info">Name: ____________________________________</div>
   </div>
   <ol id="student-questions" class="question-list"></ol>
 
   <div class="page-break"></div>
 
+  <!-- 解答用プリント -->
   <div class="worksheet-header">
-    <h2 id="teacher-header-title"></h2>
-    <div>[ Answer Key ]</div>
+    <div class="header-left">
+      <h2 id="teacher-header-title"></h2>
+      <div id="teacher-serial-code" class="serial-code"></div>
+    </div>
+    <div class="answer-label">[ 解答 ]</div>
   </div>
   <ol id="teacher-answers" class="question-list"></ol>
 </div>
