@@ -1,4 +1,4 @@
-{
+const grammarData = {
   "1": {
     "title": "1. 私は〜です。 (I'm ~.)",
     "sentences": [
@@ -220,4 +220,4 @@
       { "en": "How can I get there? - You can walk there.", "jp": "(私は)そこへはどのようにして行けますか。ーそこへは歩いて行けます。" }
     ]
   }
-}
+};
